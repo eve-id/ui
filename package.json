@@ -3,6 +3,7 @@
 	"description": "TODO",
 	"version": "0.0.1",
 	"scripts": {
+		"validate-beta": "svelte-check",
 		"dev": "sapper dev",
 		"build": "sapper build --legacy",
 		"export": "sapper export --legacy",
@@ -12,12 +13,17 @@
 		"prelint": "npm run format",
 		"lint:fix": "eslint --cache --fix './**/*.{js,svelte}'",
 		"lint": "eslint './**/*.{js,svelte}'",
-		"--CLEANING--": "==============================================",
-		"clean": "rimraf __sapper__ node_modules src/node_modules",
-		"clean:build": "rimraf __sapper__",
+		"--TESTING--": "==============================================",
+		"pretest": "npm run lint",
 		"cy:run": "cypress run",
 		"cy:open": "cypress open",
-		"test": "run-p --race dev cy:run"
+		"test": "npm run build && run-p --race start cy:run",
+		"--CI--": "==============================================",
+		"ci:lint": "echo \"running as part of npm run ci:test\"",
+		"ci:test": "npm run build && npm test && npm run clean:build",
+		"--CLEANING--": "==============================================",
+		"clean": "rimraf __sapper__ node_modules src/node_modules",
+		"clean:build": "rimraf __sapper__"
 	},
 	"dependencies": {
 		"compression": "^1.7.1",
@@ -40,6 +46,7 @@
 		"@tailwindcss/ui": "^0.5.0",
 		"@types/yup": "^0.29.6",
 		"cssnano": "^4.1.10",
+		"cypress": "^5.0.0",
 		"eslint": "^7.8.0",
 		"eslint-config-prettier": "^6.11.0",
 		"eslint-plugin-cypress": "^2.11.1",

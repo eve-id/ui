@@ -12,7 +12,8 @@
 </div>
 
 <script>
-	import utils, { ClassBuilder, filterProps } from "../../utils/classes.js";
+	// import utils, { ClassBuilder, filterProps } from "../../utils/classes.js";
+	import utils, { ClassBuilder } from "../../utils/classes.js";
 
 	export let noUnderline = false;
 	export let outlined = false;
@@ -43,8 +44,8 @@
 		.replace(replace)
 		.get();
 
-	const props = filterProps(
-		["focused", "error", "outlined", "labelOnTop", "prepend", "bgcolor", "color"],
-		$$props,
-	);
+	// const props = filterProps(
+	// 	["focused", "error", "outlined", "labelOnTop", "prepend", "bgcolor", "color"],
+	// 	$$props,
+	// );
 </script>

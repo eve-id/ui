@@ -27,9 +27,11 @@ module.exports = {
 			postcssPurgecss({
 				content: ["./src/**/*.svelte", "./src/**/*.html"],
 				defaultExtractor: (content) =>
-					[...content.matchAll(/(?:class:)*([\w\d-/:%.]+)/gm)].map(
-						([_match, group, ..._rest]) => group,
-					),
+					[...content.matchAll(/(?:class:)*([\w\d-/:%.]+)/gm)].map(([_match, group, ..._rest]) => {
+						let _ = [_match, _rest];
+						() => _;
+						return group;
+					}),
 			}),
 
 		!dev &&

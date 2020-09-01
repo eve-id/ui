@@ -30,7 +30,8 @@ export class ClassBuilder {
 		return this;
 	}
 
-	extend(...fns) {
+	// extend(...fns) {
+	extend() {
 		return this;
 	}
 

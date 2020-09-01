@@ -45,9 +45,7 @@
 				Identity services in a simple package, easy integration, simple payment.
 			</p>
 			<div class="mb-6">
-				<ButtonLink href="/accounts/signup" title="Sign up">
-					<span>Get started</span>
-				</ButtonLink>
+				<ButtonLink href="/accounts/signup" title="Sign up"><span>Get started</span></ButtonLink>
 			</div>
 			<div class="mb-4 text-gray-800">
 				<Link href="/learn-more" color="secondary">Learn more</Link>
@@ -60,9 +58,7 @@
 		<div class="mr-auto">
 			<div class="language-switcher flex relative cursor-pointer">
 				<div class="language-container">
-					<div class="language-presentation">
-						<span>English</span>
-					</div>
+					<div class="language-presentation"><span>English</span></div>
 					<div class="language-list"></div>
 				</div>
 				<div class="arrow-container">

@@ -137,7 +137,7 @@
 	export let appendClasses = appendDefault;
 	export let prependClasses = prependDefault;
 
-	const { bg, border, txt, caret } = utils(color);
+	const { border, txt, caret } = utils(color);
 
 	const cb = new ClassBuilder(inputClasses, inputDefault);
 	const ccb = new ClassBuilder(classes, classesDefault);

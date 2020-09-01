@@ -1,4 +1,4 @@
-import { timestamp, files, shell, routes } from "@sapper/service-worker";
+import { timestamp, files, shell } from "@sapper/service-worker";
 
 const ASSETS = `cache${timestamp}`;
 
@@ -14,6 +14,7 @@ self.addEventListener("install", (event) => {
 			.then((cache) => cache.addAll(to_cache))
 			.then(() => {
 				self.skipWaiting();
+				return;
 			}),
 	);
 });
@@ -27,6 +28,7 @@ self.addEventListener("activate", (event) => {
 			}
 
 			self.clients.claim();
+			return;
 		}),
 	);
 });
