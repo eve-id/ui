@@ -1,0 +1,106 @@
+# This is a basic workflow to help you get started with Actions
+
+name: EVEID UI Deploy CI
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  release:
+    types: [created]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  validate-release-name:
+    name: Validate Release Name
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validation
+        uses: autoget/validate-tag@v0.1.3
+
+  docker-image:
+    name: Build & Publish Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v2
+
+      - name: Set Container Registry
+        run: echo ::set-env name=DOCKER_REGISTRY::eu.gcr.io
+
+      - name: Set Docker Image
+        run: echo ::set-env name=DOCKER_IMAGE::${{ env.DOCKER_REGISTRY }}/eveid/ui
+
+      - name: Login to gcloud registry
+        id: gcloud
+        uses: elgohr/gcloud-login-action@0.2
+        with:
+          account_key: ${{ secrets.GCLOUD_KEY }}
+
+      - name: Build docker
+        run: docker build . -t ${{ env.DOCKER_IMAGE }}
+
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@2.18
+        with:
+          name: ${{ env.DOCKER_IMAGE }}
+          username: ${{ steps.gcloud.outputs.username }}
+          password: ${{ steps.gcloud.outputs.password }}
+          registry: ${{ env.DOCKER_REGISTRY }}
+          tag_names: true
+
+  deployment:
+    name: Deploy backend to cluster
+    runs-on: "ubuntu-latest"
+    needs: [docker-image]
+    steps:
+      - name: Checkout working branch
+        uses: actions/checkout@v2
+
+      - name: Set Release version
+        run: |
+          echo ::set-env name=RELEASE_VERSION::${{ github.event.release.tag_name }}
+
+      - name: Cluster env for production
+        if: "!github.event.release.prerelease"
+        run: |
+          echo ::set-env name=CLUSTER_ENV::prod
+
+      - name: Cluster env for staging/dev
+        if: "github.event.release.prerelease"
+        run: |
+          BRANCH=${{ github.event.release.target_commitish }}
+          MASTER_BRANCH_NAME='master'
+          if [[ "$BRANCH" == "$MASTER_BRANCH_NAME" ]]; then
+            echo ::set-env name=CLUSTER_ENV::stag
+          else
+            echo ::set-env name=CLUSTER_ENV::dev
+          fi
+
+      - name: Set Cluster credentials
+        run: |
+          echo ::set-env name=CLUSTER_NAME::nexus
+          echo ::set-env name=CLUSTER_ZONE::europe-west1-c
+          echo ::set-env name=PROJECT_NAME::autoget
+
+      - name: Install kubectl
+        run: |
+          sudo apt-get install kubectl
+      - name: Install helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+      - name: Deploy Release on cluster
+        env:
+          GCLOUD_KEY: ${{ secrets.GCLOUD_KEY }}
+        run: |
+          echo "$GCLOUD_KEY" | base64 --decode > ${HOME}/gcloud.json
+          gcloud auth activate-service-account --key-file=${HOME}/gcloud.json
+          gcloud auth configure-docker
+          gcloud container clusters get-credentials \
+          ${{ env.CLUSTER_NAME }} --zone ${{ env.CLUSTER_ZONE }} --project ${{ env.PROJECT_NAME }}
+          # install/upgrade helm chart
+          helm upgrade --install eveid-ui ./deploy/helm -n ${{ env.CLUSTER_ENV }} \
+            --values ./deploy/helm/env.values.${{ env.CLUSTER_ENV }}.yaml \
+            --set image.version=${{ env.RELEASE_VERSION }} \
