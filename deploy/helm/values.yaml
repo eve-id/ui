@@ -1,7 +1,7 @@
 # .container.registry targets the container registry for pulling the image
 # .container.image is the specific image that's gonna be used
 image:
-  name: localhost:5000/eveid-ui
+  name: eu.gcr.io/eveid/ui
   # should be overrided ex: rc-v0.0.1_landing-preview
   version: latest
 
