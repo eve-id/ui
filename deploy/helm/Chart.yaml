@@ -1,0 +1,6 @@
+apiVersion: v2
+type: application
+version: 0.0.1
+name: eveid-ui
+appVersion: 0.0.1-alpha
+description: A Helm chart for eveid's ui (user interface)

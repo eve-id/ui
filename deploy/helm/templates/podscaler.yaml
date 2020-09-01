@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name:  {{ .Release.Name }}-{{ .Values.cluster.env }}-hpa
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app:  {{ .Release.Name }}-{{ .Values.cluster.env }}
+spec:
+  scaleTargetRef:
+    kind: Deployment
+    name:  {{ .Release.Name }}-{{ .Values.cluster.env }}
+    apiVersion: apps/v1
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50

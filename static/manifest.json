@@ -1,0 +1,8 @@
+{
+	"background_color": "#ffffff",
+	"theme_color": "#333333",
+	"name": "EveID",
+	"short_name": "EveID",
+	"display": "minimal-ui",
+	"start_url": "/"
+}

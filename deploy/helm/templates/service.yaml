@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.cluster.env }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-{{ .Values.cluster.env }}
+spec:
+  selector:
+    app: {{ .Release.Name }}-{{ .Values.cluster.env }}
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: {{ .Values.server.port }}
+      targetPort: {{ .Values.server.port }}

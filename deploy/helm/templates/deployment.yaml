@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-{{ .Values.cluster.env }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Release.Name }}-{{ .Values.cluster.env }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-{{ .Values.cluster.env }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-{{ .Values.cluster.env }}
+    spec:
+      containers:
+        - name: {{ .Release.Name }}-{{ .Values.cluster.env }}
+          image: {{ .Values.image.name }}:{{ .Values.image.version }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.server.port }}
+              protocol: TCP
+          resources:
+            requests:
+              memory: "80Mi"
+              cpu: "100m"
+            limits:
+              memory: "160Mi"
+              cpu: "300m"
