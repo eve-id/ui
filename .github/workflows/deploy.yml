@@ -40,7 +40,7 @@ jobs:
         run: docker build . -t ${{ env.DOCKER_IMAGE }}
 
       - name: Publish to Registry
-        uses: elgohr/Publish-Docker-Github-Action@2.18
+        uses: elgohr/Publish-Docker-Github-Action@v5
         with:
           name: ${{ env.DOCKER_IMAGE }}
           username: ${{ steps.gcloud.outputs.username }}
